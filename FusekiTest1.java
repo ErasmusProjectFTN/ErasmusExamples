@@ -1,26 +1,24 @@
 package test;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import com.hp.hpl.jena.query.DatasetAccessor;
-import com.hp.hpl.jena.query.DatasetAccessorFactory;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.QuerySolution;
-import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.query.ResultSetFormatter;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.update.UpdateExecutionFactory;
-import com.hp.hpl.jena.update.UpdateFactory;
-import com.hp.hpl.jena.update.UpdateProcessor;
+import org.apache.jena.query.DatasetAccessor;
+import org.apache.jena.query.DatasetAccessorFactory;
+import org.apache.jena.query.QueryExecution;
+import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QuerySolution;
+import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.ResultSetFormatter;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.update.UpdateExecutionFactory;
+import org.apache.jena.update.UpdateFactory;
+import org.apache.jena.update.UpdateProcessor;
 
-public class FusekiExample {
-
+public class FusekiTest1 {
 	public static void uploadRDF(File rdf, String serviceURI)
 			throws IOException {
 
@@ -35,6 +33,7 @@ public class FusekiExample {
 				.createHTTP(serviceURI);
 		accessor.putModel(m);
 	}
+	
 
 	public static void execSelectAndPrint(String serviceURI, String query) {
 		QueryExecution q = QueryExecutionFactory.sparqlService(serviceURI,
@@ -72,21 +71,27 @@ public class FusekiExample {
 	}
 
 	public static void main(String[] argv) throws IOException {
-		uploadRDF(new File("test.rdf"), "http://localhost:3030/test/data");
+		uploadRDF(new File("test.rdf"), "http://localhost:3030/ds/data");
+		execSelectAndPrint(
+				"http://localhost:3030/ds/query",
+				"SELECT * WHERE {?x ?r ?y}");
 		String insert = 
 				"PREFIX si: <http://www.w3schools.com/rdf/>"
 	            + "INSERT DATA"
 	            + "{ <http://www.w3schools.com>    si:price    42}";
-		execUpdate("http://localhost:3030/test/update",insert);
+		execUpdate("http://localhost:3030/ds/update",insert);
+		execSelectAndPrint(
+				"http://localhost:3030/ds/query",
+				"SELECT * WHERE {?x ?r ?y}");
 		String delete = 
 				"PREFIX si: <http://www.w3schools.com/rdf/>"
 	            + "DELETE DATA"
 	            + "{ <http://www.w3schools.com>    si:price    42;"
 	            + " si:title \"W3Schools\". "
 	            + "}";
-		execUpdate("http://localhost:3030/test/update",delete);
+		execUpdate("http://localhost:3030/ds/update",delete);
 		execSelectAndPrint(
-				"http://localhost:3030/test/query",
+				"http://localhost:3030/ds/query",
 				"SELECT * WHERE {?x ?r ?y}");
 
 

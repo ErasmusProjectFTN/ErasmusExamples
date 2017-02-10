@@ -62,10 +62,21 @@ public class FirstExample {
     }
 
     public static void main(String[] argv) throws IOException {
-        uploadRDF("/test.rdf", "http://localhost:3030/ds/data");
-        execSelectAndPrint("http://localhost:3030/ds/query", "SELECT * WHERE {?x ?r ?y}");
+        //uploadRDF("/test.rdf", "http://localhost:3030/ds/data");
+        //execSelectAndPrint("http://localhost:3030/ds/query", "SELECT * WHERE {?x ?r ?y}");
 
+        String select  = "PREFIX  ex: <http://example.org/>\n" + "SELECT ?animal\n" + "WHERE\n"
+                + "  { ?animal a ex:animal . }";
+        QueryExecution q = QueryExecutionFactory.sparqlService("http://localhost:3030/mysql/sparql", select);
+        ResultSet results = q.execSelect();
 
+        ResultSetFormatter.out(System.out, results);
+
+        while (results.hasNext()) {
+            QuerySolution soln = results.nextSolution();
+            RDFNode x = soln.get("x");
+            System.out.println(x);
+        }
 
         /*
         String insert =
